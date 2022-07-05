@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "cd backend && npm i && npx sequelize db:migrate && cd ../frontend && npm i",
+    "postinstall": "cd backend && npm i && npx sequelize db:migrate && cd ../frontend && npm i && npm build",
     "start": "cd backend && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
