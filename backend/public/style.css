@@ -1,0 +1,20 @@
+.masthead {
+  padding-top: 0;
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+}
+
+.task {
+  display: flex;
+}
+
+.remove-task {
+  color: white;
+  cursor: pointer;
+}
+
+.done-checkbox {
+}
