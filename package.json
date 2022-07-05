@@ -1,0 +1,22 @@
+{
+  "name": "321-thunk-saga",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "cd backend && npm i && npx sequelize db:migrate && cd ../frontend && npm i",
+    "start": "cd backend && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrThomasTeller/tmp-todoapp-cra.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mrThomasTeller/tmp-todoapp-cra/issues"
+  },
+  "homepage": "https://github.com/mrThomasTeller/tmp-todoapp-cra#readme"
+}
