@@ -1,22 +1,16 @@
-const ReactDOMServer = require('react-dom/server');
-const React = require('react');
 const taskRouter = require('express').Router();
-const { Op } = require('sequelize');
 const { Task } = require('../../db/models');
-const TasksList = require('../../views/TasksList');
-const TaskView = require('../../views/Task');
 
 taskRouter.get('/', async (req, res) => {
   try {
     const tasks = await Task.findAll({
-      order: [
-        ['createdAt', 'DESC'],
-      ],
-      // where: {
-      //   title: {
-      //     [Op.iLike]: `%${req.query.search || ''}%`,
-      //   },
-      // },
+      order: [['createdAt', 'DESC']],
+      where: {
+        user_id: req.session.userId,
+        // title: {
+        //   [Op.iLike]: `%${req.query.search || ''}%`,
+        // },
+      },
     });
     // await new Promise((r) => { setTimeout(r, 3000); });
     res.json(tasks);
@@ -28,9 +22,7 @@ taskRouter.get('/', async (req, res) => {
 taskRouter.get('/done', async (req, res) => {
   try {
     const tasks = await Task.findAll({
-      order: [
-        ['createdAt', 'DESC'],
-      ],
+      order: [['createdAt', 'DESC']],
       where: {
         done: true,
       },
@@ -49,12 +41,10 @@ taskRouter.post('/', async (req, res) => {
 
   const task = await Task.create({
     title: req.body.title,
+    user_id: req.session.userId,
   });
 
-  return res
-    .status(201)
-    // .renderComponent(TaskView, { task }, { doctype: false });
-    .json(task);
+  return res.status(201).json(task);
 });
 
 // параметризированный запрос
@@ -66,13 +56,12 @@ taskRouter.delete('/:id', async (req, res, next) => {
       where: {
         // в req.params.id ляжет соответсвующая часть URL
         id: Number(req.params.id),
+        user_id: req.session.userId,
       },
     });
 
     if (removedCount === 0) {
-      res
-        .status(404)
-        .json({ success: false, message: 'Нет такой задачи' });
+      res.status(404).json({ success: false, message: 'Нет такой задачи' });
     } else {
       res.json({ success: true });
     }
@@ -88,10 +77,8 @@ taskRouter.put('/:id', async (req, res, next) => {
     // достаём из БД задачу с заданным id
     const task = await Task.findByPk(Number(req.params.id));
 
-    if (!task) {
-      res
-        .status(404)
-        .json({ success: false, message: 'Нет такой задачи' });
+    if (!task || task.user_id !== req.session.userId) {
+      res.status(404).json({ success: false, message: 'Нет такой задачи' });
 
       return;
     }

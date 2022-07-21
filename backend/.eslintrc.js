@@ -5,22 +5,18 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb',
-  ],
+  extends: ['airbnb'],
   parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
     ecmaVersion: 'latest',
   },
-  plugins: [
-    'react',
-  ],
   rules: {
-    'react/jsx-one-expression-per-line': 0,
-    'react/prop-types': 0,
-    'jsx-a11y/label-has-associated-control': 0,
+    'comma-dangle': 0,
+    'no-use-before-define': 0,
+    'implicit-arrow-linebreak': 0,
+    'function-paren-newline': 0,
+    'no-param-reassign': 0,
+    'no-confusing-arrow': 0,
+    'object-curly-newline': 0,
+    'no-nested-ternary': 0,
   },
 };
