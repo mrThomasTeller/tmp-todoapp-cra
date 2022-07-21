@@ -6,13 +6,13 @@ import { login, selectLoginForm, setLoginFormName, setLoginFormPassword } from '
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { name, password } = useSelector(selectLoginForm);
+  const { name, password, error } = useSelector(selectLoginForm);
 
   const handleSubmit = React.useCallback(
     async (event) => {
       event.preventDefault();
-      await dispatch(login({ name, password }));
-      navigate('/');
+      const dispatchResult = await dispatch(login({ name, password }));
+      if (!dispatchResult.error) navigate('/');
     },
     [dispatch, navigate, name, password]
   );
@@ -30,13 +30,18 @@ function Login() {
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Вход</h2>
+      {error && (
+        <div className="invalid-feedback mb-3" style={{ display: 'block' }}>
+          {error}
+        </div>
+      )}
       <div className="mb-3">
         <label htmlFor="name-input" className="form-label">
           Name
         </label>
         <input
           type="text"
-          className="form-control"
+          className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="name"
           value={name}
@@ -44,13 +49,13 @@ function Login() {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="exampleInputPassword1" className="form-label">
+        <label htmlFor="password-input" className="form-label">
           Password
         </label>
         <input
           type="password"
-          className="form-control"
-          id="exampleInputPassword1"
+          className={`form-control ${error ? 'is-invalid' : ''}`}
+          id="password-input"
           name="password"
           value={password}
           onChange={handlePasswordChange}

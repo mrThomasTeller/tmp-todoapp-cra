@@ -12,8 +12,9 @@ function NavBar() {
   const handleLogout = React.useCallback(
     async (event) => {
       event.preventDefault();
-      await dispatch(logout());
-      navigate('/');
+
+      const dispatchResult = await dispatch(logout());
+      if (!dispatchResult.error) navigate('/');
     },
     [dispatch, navigate]
   );

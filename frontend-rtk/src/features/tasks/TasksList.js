@@ -10,7 +10,6 @@ import {
   updateTask,
   setNewTaskTitle,
   selectNewTaskTitle,
-  resetTaskValidation,
 } from './tasksSlice';
 
 function TasksList() {
@@ -47,10 +46,9 @@ function TasksList() {
 
   const handleInputChange = React.useCallback(
     (event) => {
-      if (error) dispatch(resetTaskValidation());
       dispatch(setNewTaskTitle(event.target.value));
     },
-    [dispatch, error]
+    [dispatch]
   );
 
   return (

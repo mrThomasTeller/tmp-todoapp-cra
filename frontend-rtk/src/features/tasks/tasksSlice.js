@@ -52,8 +52,6 @@ const tasksSlice = createSlice({
   reducers: {
     setNewTaskTitle: (state, action) => {
       state.newTaskTitle = action.payload;
-    },
-    resetTaskValidation: (state) => {
       state.error = undefined;
     },
   },
@@ -90,7 +88,7 @@ const tasksSlice = createSlice({
   },
 });
 
-export const { setNewTaskTitle, resetTaskValidation } = tasksSlice.actions;
+export const { setNewTaskTitle } = tasksSlice.actions;
 
 export const selectTasks = (state) => state.tasks.tasks;
 export const selectError = (state) => state.tasks.error;
