@@ -42,6 +42,10 @@ function TasksList() {
     [dispatch]
   );
 
+  const resetErrorOnChange = React.useCallback(() => {
+    dispatch(resetError());
+  }, [dispatch]);
+
   return (
     <>
       <form className="mb-3" onSubmit={handleSubmit}>
@@ -52,7 +56,7 @@ function TasksList() {
             placeholder="Добавьте задачу..."
             aria-label="Добавьте задачу..."
             name="title"
-            onChange={resetError}
+            onChange={resetErrorOnChange}
           />
           <button type="submit" className="btn btn-primary">
             добавить

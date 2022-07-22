@@ -27,6 +27,10 @@ function Login() {
     [dispatch, navigate]
   );
 
+  const resetErrorOnChange = React.useCallback(() => {
+    dispatch(resetLoginFormError());
+  }, [dispatch]);
+
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Вход</h2>
@@ -44,7 +48,7 @@ function Login() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="name"
-          onChange={resetLoginFormError}
+          onChange={resetErrorOnChange}
         />
       </div>
       <div className="mb-3">
@@ -56,7 +60,7 @@ function Login() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          onChange={resetLoginFormError}
+          onChange={resetErrorOnChange}
         />
       </div>
       <button type="submit" className="btn btn-primary">

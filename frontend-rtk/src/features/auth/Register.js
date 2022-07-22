@@ -29,6 +29,10 @@ function Register() {
     [dispatch, navigate]
   );
 
+  const resetErrorOnChange = React.useCallback(() => {
+    dispatch(resetRegisterFormError());
+  }, [dispatch]);
+
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Регистрация</h2>
@@ -46,7 +50,7 @@ function Register() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="name"
-          onChange={resetRegisterFormError}
+          onChange={resetErrorOnChange}
         />
       </div>
       <div className="mb-3">
@@ -58,7 +62,7 @@ function Register() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          onChange={resetRegisterFormError}
+          onChange={resetErrorOnChange}
         />
       </div>
       <div className="mb-3">
@@ -70,7 +74,7 @@ function Register() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-repeat-input"
           name="passwordRepeat"
-          onChange={resetRegisterFormError}
+          onChange={resetErrorOnChange}
         />
       </div>
       <button type="submit" className="btn btn-primary">

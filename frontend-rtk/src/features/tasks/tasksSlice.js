@@ -59,9 +59,6 @@ const tasksSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createTask.pending, (state) => {
-        state.error = undefined;
-      })
       .addCase(createTask.rejected, (state, action) => {
         state.error = action.error.message;
       })
