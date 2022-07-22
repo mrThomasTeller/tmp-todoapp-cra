@@ -1,35 +1,32 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {
-  register,
-  selectRegisterForm,
-  setRegisterFormName,
-  setRegisterFormPassword,
-} from './authSlice';
+import { register, selectRegisterFormError, resetRegisterFormError } from './authSlice';
 
 function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { name, password, error } = useSelector(selectRegisterForm);
+  const error = useSelector(selectRegisterFormError);
 
   const handleSubmit = React.useCallback(
     async (event) => {
       event.preventDefault();
-      const dispatchResult = await dispatch(register({ name, password }));
-      if (!dispatchResult.error) navigate('/');
+
+      const form = event.target;
+      const dispatchResult = await dispatch(
+        register({
+          name: form.name.value,
+          password: form.password.value,
+          passwordRepeat: form.passwordRepeat.value,
+        })
+      );
+
+      if (!dispatchResult.error) {
+        form.reset();
+        navigate('/');
+      }
     },
-    [dispatch, navigate, name, password]
-  );
-
-  const handleNameChange = React.useCallback(
-    (event) => dispatch(setRegisterFormName(event.target.value)),
-    [dispatch]
-  );
-
-  const handlePasswordChange = React.useCallback(
-    (event) => dispatch(setRegisterFormPassword(event.target.value)),
-    [dispatch]
+    [dispatch, navigate]
   );
 
   return (
@@ -42,32 +39,42 @@ function Register() {
       )}
       <div className="mb-3">
         <label htmlFor="name-input" className="form-label">
-          Name
+          Имя
         </label>
         <input
           type="text"
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="name"
-          value={name}
-          onChange={handleNameChange}
+          onChange={resetRegisterFormError}
         />
       </div>
       <div className="mb-3">
         <label htmlFor="password-input" className="form-label">
-          Password
+          Пароль
         </label>
         <input
           type="password"
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          value={password}
-          onChange={handlePasswordChange}
+          onChange={resetRegisterFormError}
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="password-repeat-input" className="form-label">
+          Повторите пароль
+        </label>
+        <input
+          type="password"
+          className={`form-control ${error ? 'is-invalid' : ''}`}
+          id="password-repeat-input"
+          name="passwordRepeat"
+          onChange={resetRegisterFormError}
         />
       </div>
       <button type="submit" className="btn btn-primary">
-        Submit
+        Зарегистрироваться
       </button>
     </form>
   );

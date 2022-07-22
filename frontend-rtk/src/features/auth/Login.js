@@ -1,30 +1,30 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login, selectLoginForm, setLoginFormName, setLoginFormPassword } from './authSlice';
+import { login, selectLoginFormError, resetLoginFormError } from './authSlice';
 
 function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { name, password, error } = useSelector(selectLoginForm);
+  const error = useSelector(selectLoginFormError);
 
   const handleSubmit = React.useCallback(
     async (event) => {
       event.preventDefault();
-      const dispatchResult = await dispatch(login({ name, password }));
-      if (!dispatchResult.error) navigate('/');
+      const form = event.target;
+      const dispatchResult = await dispatch(
+        login({
+          name: form.name.value,
+          password: form.password.value,
+        })
+      );
+
+      if (!dispatchResult.error) {
+        form.reset();
+        navigate('/');
+      }
     },
-    [dispatch, navigate, name, password]
-  );
-
-  const handleNameChange = React.useCallback(
-    (event) => dispatch(setLoginFormName(event.target.value)),
-    [dispatch]
-  );
-
-  const handlePasswordChange = React.useCallback(
-    (event) => dispatch(setLoginFormPassword(event.target.value)),
-    [dispatch]
+    [dispatch, navigate]
   );
 
   return (
@@ -37,32 +37,30 @@ function Login() {
       )}
       <div className="mb-3">
         <label htmlFor="name-input" className="form-label">
-          Name
+          Имя
         </label>
         <input
           type="text"
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="name"
-          value={name}
-          onChange={handleNameChange}
+          onChange={resetLoginFormError}
         />
       </div>
       <div className="mb-3">
         <label htmlFor="password-input" className="form-label">
-          Password
+          Пароль
         </label>
         <input
           type="password"
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          value={password}
-          onChange={handlePasswordChange}
+          onChange={resetLoginFormError}
         />
       </div>
       <button type="submit" className="btn btn-primary">
-        Submit
+        Войти
       </button>
     </form>
   );

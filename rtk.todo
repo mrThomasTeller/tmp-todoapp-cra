@@ -5,3 +5,7 @@
   - RTK Query
   - Reselect
   - useForm
+
+Почитать:
+  + https://redux.js.org/introduction/ecosystem
+  - https://github.com/gajus/canonical-reducer-composition

@@ -3,14 +3,17 @@ import { logout } from '../auth/authSlice';
 
 const initialState = {
   tasks: [],
-  newTaskTitle: '',
   error: undefined,
 };
 
-export const createTask = createAsyncThunk('tasks/createTask', async (_, thunkAPI) => {
+export const createTask = createAsyncThunk('tasks/createTask', async (title) => {
+  if (!title.trim()) {
+    throw new Error('Заголовок задачи не должен быть пустым');
+  }
+
   const data = await fetch('/api/tasks', {
     method: 'POST',
-    body: JSON.stringify({ title: selectNewTaskTitle(thunkAPI.getState()) }),
+    body: JSON.stringify({ title }),
     headers: {
       'Content-Type': 'application/json',
     },
@@ -50,8 +53,7 @@ const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    setNewTaskTitle: (state, action) => {
-      state.newTaskTitle = action.payload;
+    resetError: (state) => {
       state.error = undefined;
     },
   },
@@ -65,7 +67,6 @@ const tasksSlice = createSlice({
       })
       .addCase(createTask.fulfilled, (state, action) => {
         state.tasks.push(action.payload);
-        state.newTaskTitle = '';
       })
 
       .addCase(loadTasks.fulfilled, (state, action) => {
@@ -88,10 +89,9 @@ const tasksSlice = createSlice({
   },
 });
 
-export const { setNewTaskTitle } = tasksSlice.actions;
+export const { resetError } = tasksSlice.actions;
 
 export const selectTasks = (state) => state.tasks.tasks;
 export const selectError = (state) => state.tasks.error;
-export const selectNewTaskTitle = (state) => state.tasks.newTaskTitle;
 
 export default tasksSlice.reducer;

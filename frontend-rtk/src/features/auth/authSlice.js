@@ -3,16 +3,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 const initialState = {
   authChecked: false,
   user: undefined,
-  loginForm: {
-    name: '',
-    password: '',
-    error: undefined,
-  },
-  registerForm: {
-    name: '',
-    password: '',
-    error: undefined,
-  },
+  loginFormError: undefined,
+  registerFormError: undefined,
 };
 
 export const checkAuth = createAsyncThunk('auth/check', () =>
@@ -20,6 +12,10 @@ export const checkAuth = createAsyncThunk('auth/check', () =>
 );
 
 export const login = createAsyncThunk('auth/login', async (credentials) => {
+  if (!credentials.name.trim() || !credentials.password.trim()) {
+    throw new Error('Не все поля заполнены');
+  }
+
   const data = await fetch('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
@@ -37,6 +33,14 @@ export const login = createAsyncThunk('auth/login', async (credentials) => {
 });
 
 export const register = createAsyncThunk('auth/register', async (credentials) => {
+  if (credentials.password !== credentials.passwordRepeat) {
+    throw new Error('Пароли не совпадают');
+  }
+
+  if (!credentials.name.trim() || !credentials.password.trim()) {
+    throw new Error('Не все поля заполнены');
+  }
+
   const data = await fetch('/api/auth/register', {
     method: 'POST',
     body: JSON.stringify(credentials),
@@ -63,21 +67,11 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setLoginFormName: (state, action) => {
-      state.loginForm.name = action.payload;
-      state.loginForm.error = undefined;
+    resetLoginFormError: (state) => {
+      state.loginFormError = undefined;
     },
-    setLoginFormPassword: (state, action) => {
-      state.loginForm.password = action.payload;
-      state.loginForm.error = undefined;
-    },
-    setRegisterFormName: (state, action) => {
-      state.registerForm.name = action.payload;
-      state.registerForm.error = undefined;
-    },
-    setRegisterFormPassword: (state, action) => {
-      state.registerForm.password = action.payload;
-      state.registerForm.error = undefined;
+    resetRegisterFormError: (state) => {
+      state.registerFormError = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -89,10 +83,10 @@ const authSlice = createSlice({
 
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.loginForm = initialState.loginForm;
+        state.loginFormError = undefined;
       })
       .addCase(login.rejected, (state, action) => {
-        state.loginForm.error = action.error.message;
+        state.loginFormError = action.error.message;
       })
 
       .addCase(logout.fulfilled, (state) => {
@@ -101,24 +95,19 @@ const authSlice = createSlice({
 
       .addCase(register.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.registerForm = initialState.registerForm;
+        state.registerFormError = undefined;
       })
       .addCase(register.rejected, (state, action) => {
-        state.registerForm.error = action.error.message;
+        state.registerFormError = action.error.message;
       });
   },
 });
 
-export const {
-  setLoginFormName,
-  setLoginFormPassword,
-  setRegisterFormName,
-  setRegisterFormPassword,
-} = authSlice.actions;
+export const { resetLoginFormError, resetRegisterFormError } = authSlice.actions;
 
 export const selectAuthChecked = (state) => state.auth.authChecked;
 export const selectUser = (state) => state.auth.user;
-export const selectLoginForm = (state) => state.auth.loginForm;
-export const selectRegisterForm = (state) => state.auth.registerForm;
+export const selectLoginFormError = (state) => state.auth.loginFormError;
+export const selectRegisterFormError = (state) => state.auth.registerFormError;
 
 export default authSlice.reducer;

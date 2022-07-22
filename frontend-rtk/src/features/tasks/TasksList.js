@@ -8,14 +8,12 @@ import {
   selectError,
   selectTasks,
   updateTask,
-  setNewTaskTitle,
-  selectNewTaskTitle,
+  resetError,
 } from './tasksSlice';
 
 function TasksList() {
   const tasks = useSelector(selectTasks);
   const error = useSelector(selectError);
-  const newTaskTitle = useSelector(selectNewTaskTitle);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,7 +23,7 @@ function TasksList() {
   const handleSubmit = React.useCallback(
     async (event) => {
       event.preventDefault();
-      dispatch(createTask());
+      dispatch(createTask(event.target.title.value));
     },
     [dispatch]
   );
@@ -44,13 +42,6 @@ function TasksList() {
     [dispatch]
   );
 
-  const handleInputChange = React.useCallback(
-    (event) => {
-      dispatch(setNewTaskTitle(event.target.value));
-    },
-    [dispatch]
-  );
-
   return (
     <>
       <form className="mb-3" onSubmit={handleSubmit}>
@@ -61,8 +52,7 @@ function TasksList() {
             placeholder="Добавьте задачу..."
             aria-label="Добавьте задачу..."
             name="title"
-            value={newTaskTitle}
-            onChange={handleInputChange}
+            onChange={resetError}
           />
           <button type="submit" className="btn btn-primary">
             добавить
