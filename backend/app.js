@@ -3,7 +3,6 @@ require('dotenv').config();
 // не забудь установить babel:
 // npm i @babel/core @babel/preset - env @babel/preset-react @babel/register
 // также не забудь положить файл .babelrc в корень проекта
-require('@babel/register');
 const express = require('express');
 const path = require('path');
 const expressConfig = require('./config/express');
