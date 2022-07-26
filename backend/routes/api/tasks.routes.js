@@ -9,7 +9,7 @@ taskRouter.get('/', async (req, res) => {
         ['id', 'DESC'],
       ],
       where: {
-        user_id: req.session.userId,
+        user_id: req.session.userId ?? null,
         // title: {
         //   [Op.iLike]: `%${req.query.search || ''}%`,
         // },
