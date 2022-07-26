@@ -1,42 +1,35 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login, selectLoginFormError, resetLoginFormError } from './authSlice';
+import { useLoginMutation } from './authApi';
 
 function Login() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const error = useSelector(selectLoginFormError);
+  const [login, { error, reset: resetQuery }] = useLoginMutation();
 
   const handleSubmit = React.useCallback(
     async (event) => {
       event.preventDefault();
       const form = event.target;
-      const dispatchResult = await dispatch(
-        login({
-          name: form.name.value,
-          password: form.password.value,
-        })
-      );
 
-      if (!dispatchResult.error) {
+      const result = await login({
+        name: form.name.value,
+        password: form.password.value,
+      });
+
+      if (!result.error) {
         form.reset();
         navigate('/');
       }
     },
-    [dispatch, navigate]
+    [login, navigate]
   );
-
-  const resetErrorOnChange = React.useCallback(() => {
-    dispatch(resetLoginFormError());
-  }, [dispatch]);
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Вход</h2>
       {error && (
         <div className="invalid-feedback mb-3" style={{ display: 'block' }}>
-          {error}
+          {error.data.error}
         </div>
       )}
       <div className="mb-3">
@@ -48,7 +41,7 @@ function Login() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="name"
-          onChange={resetErrorOnChange}
+          onChange={resetQuery}
         />
       </div>
       <div className="mb-3">
@@ -60,7 +53,7 @@ function Login() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          onChange={resetErrorOnChange}
+          onChange={resetQuery}
         />
       </div>
       <button type="submit" className="btn btn-primary">

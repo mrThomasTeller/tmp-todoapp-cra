@@ -1,22 +1,16 @@
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
 import Main from '../features/main/Main';
 import TasksList from '../features/tasks/TasksList';
 import Login from '../features/auth/Login';
 import Register from '../features/auth/Register';
-import { checkAuth, selectAuthChecked } from '../features/auth/authSlice';
+import { useUserQuery } from '../features/auth/authApi';
 
 function App() {
-  const dispatch = useDispatch();
-  const authChecked = useSelector(selectAuthChecked);
+  const userQuery = useUserQuery();
 
-  React.useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
-
-  if (!authChecked) {
+  if (!userQuery.data) {
     return (
       <div className="spinner-border text-primary" role="status">
         <span className="visually-hidden">Loading...</span>

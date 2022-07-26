@@ -1,22 +1,21 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { selectUser, logout } from '../auth/authSlice';
+import { useUserQuery, useLogoutMutation } from '../auth/authApi';
 
 function NavBar() {
-  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const user = useSelector(selectUser);
+  const [logout] = useLogoutMutation();
+  const { data: { user } = {} } = useUserQuery();
 
   const handleLogout = React.useCallback(
     async (event) => {
       event.preventDefault();
 
-      const dispatchResult = await dispatch(logout());
-      if (!dispatchResult.error) navigate('/');
+      const result = await logout();
+      if (!result.error) navigate('/');
     },
-    [dispatch, navigate]
+    [logout, navigate]
   );
 
   return (

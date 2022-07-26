@@ -4,7 +4,10 @@ const { Task } = require('../../db/models');
 taskRouter.get('/', async (req, res) => {
   try {
     const tasks = await Task.findAll({
-      order: [['createdAt', 'DESC']],
+      order: [
+        ['createdAt', 'DESC'],
+        ['id', 'DESC'],
+      ],
       where: {
         user_id: req.session.userId,
         // title: {

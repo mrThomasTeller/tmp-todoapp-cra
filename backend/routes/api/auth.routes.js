@@ -2,7 +2,7 @@ const authRouter = require('express').Router();
 const bcrypt = require('bcrypt');
 const { User } = require('../../db/models');
 
-authRouter.get('/check', async (req, res) => {
+authRouter.get('/user', async (req, res) => {
   const { user } = res.locals;
   if (user) {
     res.json({

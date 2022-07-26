@@ -1,11 +1,9 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { register as registerAction } from './authSlice';
+import { useRegisterMutation } from './authApi';
 
 function Register() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     register,
@@ -16,19 +14,19 @@ function Register() {
     getValues,
   } = useForm({ mode: 'onSubmit', shouldUseNativeValidation: false });
 
-  const submit = handleSubmit(async (data) => {
-    const dispatchResult = await dispatch(
-      registerAction({
-        name: data.name,
-        password: data.password,
-        passwordRepeat: data.passwordRepeat,
-      })
-    );
+  const [registerQuery] = useRegisterMutation();
 
-    if (dispatchResult.error) {
-      setError(dispatchResult.error.name, {
+  const submit = handleSubmit(async (data) => {
+    const { error } = await registerQuery({
+      name: data.name,
+      password: data.password,
+      passwordRepeat: data.passwordRepeat,
+    });
+
+    if (error) {
+      setError('name', {
         type: 'manual',
-        message: dispatchResult.error.message,
+        message: error.data.error,
       });
     } else {
       reset();
@@ -75,9 +73,7 @@ function Register() {
           className={`form-control ${errors.passwordRepeat ? 'is-invalid' : ''}`}
           id="password-repeat-input"
           {...register('passwordRepeat', {
-            validate: {
-              sameAsPassword: (value) => value === getValues('password') || 'Пароли не совпадают',
-            },
+            validate: (value) => value === getValues('password') || 'Пароли не совпадают',
           })}
         />
         <Error error={errors.passwordRepeat?.message} />

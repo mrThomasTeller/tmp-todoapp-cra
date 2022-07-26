@@ -6,14 +6,14 @@ import Main from '../features/main/Main';
 import TasksList from '../features/tasks/TasksList';
 import Login from '../features/auth/Login';
 import Register from '../features/auth/Register';
-import { checkAuth, selectAuthChecked } from '../features/auth/authSlice';
+import { getUser, selectAuthChecked } from '../features/auth/authSlice';
 
 function App() {
   const dispatch = useDispatch();
   const authChecked = useSelector(selectAuthChecked);
 
   React.useEffect(() => {
-    dispatch(checkAuth());
+    dispatch(getUser());
   }, [dispatch]);
 
   if (!authChecked) {
