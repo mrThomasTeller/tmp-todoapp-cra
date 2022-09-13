@@ -3,10 +3,9 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import reducer from './rootReducer';
 
-// Единственный и неповторимый
 const store = createStore(
   reducer,
-  composeWithDevTools(applyMiddleware(thunk)),
+  composeWithDevTools(applyMiddleware(thunk))
 );
 
 export default store;
