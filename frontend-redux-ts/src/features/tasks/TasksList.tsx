@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { tasksLoaded, resetTaskValidation, taskUpdated } from './actionsCreators';
-import { addTaskFailure, addTaskSuccess } from './actionsCreators';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectTasks, selectTasksError } from './selectors';
 import TaskView from './TaskView';
 import * as api from './api';
-import Task from './types/Task';
-import { selectTasks, selectTasksError } from './selectors';
+import {
+  addTaskSuccess,
+  tasksLoaded,
+  addTaskFailure,
+  taskUpdated,
+  taskDeleted,
+  resetTaskValidation,
+} from './actionsCreators';
+import Task, { TaskId } from './types/Task';
 
 function TasksList() {
   const tasks = useSelector(selectTasks);
@@ -13,54 +19,68 @@ function TasksList() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    api.loadTasks().then((tasks) => dispatch(tasksLoaded(tasks)));
+    api.getTasks().then((tasks) => {
+      dispatch(tasksLoaded(tasks));
+    });
   }, [dispatch]);
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
-      const input = (event.target as any).title;
-      const title = input.value;
-
+      const form = event.target as HTMLFormElement;
       api
-        .createTask(title)
-        .then((task) => dispatch(addTaskSuccess(task)))
-        .catch((error) => dispatch(addTaskFailure(error)));
+        .createTask(form.taskTitle.value)
+        .then((task) => {
+          dispatch(addTaskSuccess(task));
+          form.reset();
+        })
+        .catch((error) => {
+          dispatch(addTaskFailure(error));
+        });
     },
     [dispatch]
   );
-
-  const resetValidation = React.useCallback(() => {
-    if (error) dispatch(resetTaskValidation());
-  }, [dispatch, error]);
 
   const handleTaskChange = React.useCallback(
     (newTask: Task) => {
-      api.updateTask(newTask).then(() => dispatch(taskUpdated(newTask)));
+      api.updateTask(newTask).then(() => {
+        dispatch(taskUpdated(newTask));
+      });
     },
     [dispatch]
   );
 
+  const handleTaskRemove = React.useCallback(
+    (id: TaskId) => {
+      api.deleteTask(id).then(() => {
+        dispatch(taskDeleted(id));
+      });
+    },
+    [dispatch]
+  );
+
+  const resetErrorOnChange = React.useCallback(() => {
+    dispatch(resetTaskValidation());
+  }, [dispatch]);
+
   return (
     <>
-      <h1>Список дел</h1>
-
-      <form onSubmit={handleSubmit}>
-        <div className="input-group mb-3">
+      <form className="mb-3" onSubmit={handleSubmit}>
+        <div className="input-group">
           <input
             type="text"
             className={`form-control ${error ? 'is-invalid' : ''}`}
             placeholder="Добавьте задачу..."
             aria-label="Добавьте задачу..."
-            name="title"
-            onChange={resetValidation}
+            name="taskTitle"
+            onChange={resetErrorOnChange}
           />
           <button type="submit" className="btn btn-primary">
             добавить
           </button>
         </div>
         {error && (
-          <div className="invalid-feedback" style={{ display: 'block' }}>
+          <div className="invalid-feedback text-end" style={{ display: 'block' }}>
             {error}
           </div>
         )}
@@ -68,7 +88,12 @@ function TasksList() {
 
       <div className="tasks list-group">
         {tasks.map((task) => (
-          <TaskView key={task.id} task={task} onChange={handleTaskChange} />
+          <TaskView
+            key={task.id}
+            task={task}
+            onChange={handleTaskChange}
+            onRemove={handleTaskRemove}
+          />
         ))}
       </div>
     </>

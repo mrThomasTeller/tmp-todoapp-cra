@@ -1,14 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
 import './App.css';
 import Main from '../features/main/Main';
 import TasksList from '../features/tasks/TasksList';
-import store from '../store';
 import Login from '../features/auth/Login';
 import { selectAuthChecked } from '../features/auth/selectors';
 import * as api from '../features/auth/api';
 import { userChecked } from '../features/auth/actionsCreators';
+import Register from '../features/auth/Register';
 
 function App() {
   const dispatch = useDispatch();
@@ -29,15 +29,13 @@ function App() {
   }
 
   return (
-    <Provider store={store}>
-      <Routes>
-        <Route path="/" element={<Main />}>
-          <Route path="/tasks" element={<TasksList />} />
-          <Route path="/auth/login" element={<Login />} />
-          <Route path="/auth/register" element={<Register />} />
-        </Route>
-      </Routes>
-    </Provider>
+    <Routes>
+      <Route path="/" element={<Main />}>
+        <Route path="/tasks" element={<TasksList />} />
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+      </Route>
+    </Routes>
   );
 }
 

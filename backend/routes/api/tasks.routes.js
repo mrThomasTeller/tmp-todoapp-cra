@@ -18,6 +18,7 @@ taskRouter.get('/', async (req, res) => {
     // await new Promise((r) => { setTimeout(r, 3000); });
     res.json(tasks);
   } catch (error) {
+    console.error(error);
     res.redirect('/error');
   }
 });

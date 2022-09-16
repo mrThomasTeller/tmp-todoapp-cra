@@ -1,31 +1,31 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../store';
-import { register, selectRegisterFormError, resetRegisterFormError } from './authSlice';
+import { selectRegisterFormError } from './selectors';
+import * as api from './api';
+import { registerSuccess, resetRegisterFormError } from './actionsCreators';
 
 function Register() {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector(selectRegisterFormError);
 
   const handleSubmit = React.useCallback(
-    async (event) => {
+    (event: React.FormEvent) => {
       event.preventDefault();
 
-      const form = event.target;
-      const dispatchResult = await dispatch(
-        register({
-          name: form.name.value,
+      const form = event.target as HTMLFormElement;
+      api
+        .register({
+          name: form.username.value,
           password: form.password.value,
           passwordRepeat: form.passwordRepeat.value,
         })
-      );
-
-      if (!dispatchResult.error) {
-        form.reset();
-        navigate('/');
-      }
+        .then((user) => {
+          dispatch(registerSuccess(user));
+          form.reset();
+          navigate('/');
+        });
     },
     [dispatch, navigate]
   );
@@ -50,7 +50,7 @@ function Register() {
           type="text"
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
-          name="name"
+          name="username"
           onChange={resetErrorOnChange}
         />
       </div>

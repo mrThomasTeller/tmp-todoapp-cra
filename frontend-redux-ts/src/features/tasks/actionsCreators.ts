@@ -1,5 +1,6 @@
 import Task from './types/Task';
 import TasksAction from './types/TasksAction';
+import { TaskId } from './types/Task';
 
 export const addTaskSuccess = (task: Task): TasksAction => ({
   type: 'TASKS_ADD_SUCCESS',
@@ -21,6 +22,11 @@ export const tasksLoaded = (tasks: Task[]): TasksAction => ({
 export const taskUpdated = (newTask: Task): TasksAction => ({
   type: 'TASKS_UPDATED',
   payload: newTask,
+});
+
+export const taskDeleted = (taskId: TaskId): TasksAction => ({
+  type: 'TASKS_DELETED',
+  payload: taskId,
 });
 
 // Чистые функции

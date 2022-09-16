@@ -29,7 +29,7 @@ const authReducer: Reducer<AuthState, AuthAction> = (state = initialState, actio
     }
 
     case 'AUTH_REGISTER_ERROR': {
-      return { ...state, registerFormError: undefined };
+      return { ...state, registerFormError: action.error };
     }
 
     case 'AUTH_RESET_REGISTER_FORM_ERROR': {

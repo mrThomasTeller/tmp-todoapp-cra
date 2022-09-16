@@ -23,11 +23,10 @@ export const login = createAsyncThunk('auth/login', async (credentials: Credenti
   }
 
   try {
-    return (await api.login(credentials)).data;
+    return await api.login(credentials);
   } catch (ex) {
     if (ex instanceof AxiosError) {
       // ts
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       throw ex.response?.data.error;
     }
   }

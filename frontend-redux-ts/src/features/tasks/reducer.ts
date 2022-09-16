@@ -34,9 +34,16 @@ const tasksReducer: Reducer<TasksState, TasksAction> = (state = initialState, ac
       };
     }
 
-    default:
-      return state;
+    case 'TASKS_DELETED': {
+      const taskId = action.payload;
+      return {
+        ...state,
+        tasks: state.tasks.filter((task) => task.id !== taskId),
+      };
+    }
   }
+
+  return state;
 };
 
 export default tasksReducer;

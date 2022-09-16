@@ -4,5 +4,3 @@ export default interface Task {
   title: string;
   done: boolean;
 }
-
-export type TaskId = Task['id'];
