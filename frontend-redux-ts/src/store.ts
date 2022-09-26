@@ -6,5 +6,4 @@ const store = createStore(reducer, composeWithDevTools());
 
 export default store;
 
-// ts
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,20 +1,24 @@
 import React from 'react';
-import { useSelector, useAppDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { selectUser, logout } from '../auth/authSlice';
+import { useAppDispatch } from '../../store';
+import { logout } from '../auth/authSlice';
+import { selectUser } from '../auth/selectors';
 
-function NavBar() {
+function NavBar(): JSX.Element {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
 
   const handleLogout = React.useCallback(
-    async (event) => {
+    async (event: React.MouseEvent) => {
       event.preventDefault();
 
       const dispatchResult = await dispatch(logout());
-      if (!dispatchResult.error) navigate('/');
+      if (logout.fulfilled.match(dispatchResult)) {
+        navigate('/');
+      }
     },
     [dispatch, navigate]
   );

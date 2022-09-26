@@ -1,5 +1,4 @@
-import Task from './Task';
-import { TaskId } from './Task';
+import Task, { TaskId } from './Task';
 
 type TasksAction =
   | { type: 'TASKS_ADD_SUCCESS'; payload: Task }

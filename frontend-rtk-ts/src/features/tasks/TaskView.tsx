@@ -1,9 +1,19 @@
 import React from 'react';
+import Task, { TaskId } from './types/Task';
 
-function Task({ task, onChange, onRemove }) {
+function TaskView({
+  task,
+  onChange,
+  onRemove,
+}: {
+  task: Task;
+  onChange: (task: Task) => void;
+  onRemove: (taskId: TaskId) => void;
+}): JSX.Element {
   const handleChange = React.useCallback(
-    (event) => {
-      const done = event.target.checked;
+    (event: React.ChangeEvent) => {
+      const checkbox = event.target as HTMLInputElement;
+      const done = checkbox.checked;
       const newTask = { ...task, done };
       onChange(newTask);
     },
@@ -11,7 +21,7 @@ function Task({ task, onChange, onRemove }) {
   );
 
   const handleRemove = React.useCallback(
-    (event) => {
+    (event: React.MouseEvent) => {
       event.stopPropagation();
       event.preventDefault();
       onRemove(task.id);
@@ -43,4 +53,4 @@ function Task({ task, onChange, onRemove }) {
   );
 }
 
-export default Task;
+export default TaskView;

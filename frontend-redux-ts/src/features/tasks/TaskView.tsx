@@ -9,7 +9,7 @@ function TaskView({
   task: Task;
   onChange: (task: Task) => void;
   onRemove: (taskId: TaskId) => void;
-}) {
+}): JSX.Element {
   const handleChange = React.useCallback(
     (event: React.FormEvent) => {
       const done = (event.target as HTMLInputElement).checked;

@@ -5,7 +5,7 @@ import { selectUser } from '../auth/selectors';
 import * as api from '../auth/api';
 import { logoutSuccess } from '../auth/actionsCreators';
 
-function NavBar() {
+function NavBar(): JSX.Element {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();

@@ -1,51 +1,59 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useAppDispatch } from '../../store';
-import Task from './Task';
+import { selectTasks, selectError } from './selectors';
+import TaskView from './TaskView';
 import {
   createTask,
   deleteTask,
   loadTasks,
-  selectError,
-  selectTasks,
   updateTask,
   resetError,
 } from './tasksSlice';
+import Task, { TaskId } from './types/Task';
+import { useAppDispatch } from '../../store';
 
-function TasksList() {
+function TasksList(): JSX.Element {
   const tasks = useSelector(selectTasks);
   const error = useSelector(selectError);
   const dispatch = useAppDispatch();
+  const [newTaskText, setNewTaskText] = React.useState('');
 
   useEffect(() => {
     dispatch(loadTasks());
   }, [dispatch]);
 
   const handleSubmit = React.useCallback(
-    async (event) => {
+    async (event: React.FormEvent) => {
       event.preventDefault();
-      dispatch(createTask(event.target.title.value));
+      const dispatchResult = await dispatch(createTask(newTaskText));
+      if (createTask.fulfilled.match(dispatchResult)) {
+        setNewTaskText('');
+      }
     },
-    [dispatch]
+    [dispatch, newTaskText]
   );
 
   const handleTaskChange = React.useCallback(
-    (newTask) => {
+    (newTask: Task) => {
       dispatch(updateTask(newTask));
     },
     [dispatch]
   );
 
   const handleTaskRemove = React.useCallback(
-    (id) => {
+    (id: TaskId) => {
       dispatch(deleteTask(id));
     },
     [dispatch]
   );
 
-  const resetErrorOnChange = React.useCallback(() => {
-    dispatch(resetError());
-  }, [dispatch]);
+  const handleNewTaskTextChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewTaskText(event.target.value);
+      dispatch(resetError());
+    },
+    [dispatch]
+  );
 
   return (
     <>
@@ -56,15 +64,19 @@ function TasksList() {
             className={`form-control ${error ? 'is-invalid' : ''}`}
             placeholder="Добавьте задачу..."
             aria-label="Добавьте задачу..."
-            name="title"
-            onChange={resetErrorOnChange}
+            name="taskTitle"
+            value={newTaskText}
+            onChange={handleNewTaskTextChange}
           />
           <button type="submit" className="btn btn-primary">
             добавить
           </button>
         </div>
         {error && (
-          <div className="invalid-feedback text-end" style={{ display: 'block' }}>
+          <div
+            className="invalid-feedback text-end"
+            style={{ display: 'block' }}
+          >
             {error}
           </div>
         )}
@@ -72,7 +84,12 @@ function TasksList() {
 
       <div className="tasks list-group">
         {tasks.map((task) => (
-          <Task key={task.id} task={task} onChange={handleTaskChange} onRemove={handleTaskRemove} />
+          <TaskView
+            key={task.id}
+            task={task}
+            onChange={handleTaskChange}
+            onRemove={handleTaskRemove}
+          />
         ))}
       </div>
     </>

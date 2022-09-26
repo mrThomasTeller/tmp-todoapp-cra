@@ -40,6 +40,11 @@ export async function register(data: RegisterData): Promise<User> {
     },
   });
 
+  if (res.status >= 400) {
+    const { error } = await res.json();
+    throw error;
+  }
+
   return res.json();
 }
 

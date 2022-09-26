@@ -5,32 +5,44 @@ import { selectLoginFormError } from './selectors';
 import * as api from './api';
 import { loginSuccess, resetLoginFormError } from './actionsCreators';
 
-function Login() {
+function Login(): JSX.Element {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector(selectLoginFormError);
+  const [name, setName] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleSubmit = React.useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
-      const form = event.target as HTMLFormElement;
       api
         .login({
-          name: form.username.value,
-          password: form.password.value,
+          name,
+          password,
         })
         .then((user) => {
           dispatch(loginSuccess(user));
-          form.reset();
           navigate('/');
         });
     },
-    [dispatch, navigate]
+    [dispatch, name, navigate, password]
   );
 
-  const resetErrorOnChange = React.useCallback(() => {
-    dispatch(resetLoginFormError());
-  }, [dispatch]);
+  const handleNameChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setName(event.target.value);
+      dispatch(resetLoginFormError());
+    },
+    [dispatch]
+  );
+
+  const handlePasswordChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(event.target.value);
+      dispatch(resetLoginFormError());
+    },
+    [dispatch]
+  );
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
@@ -49,7 +61,8 @@ function Login() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="username"
-          onChange={resetErrorOnChange}
+          value={name}
+          onChange={handleNameChange}
         />
       </div>
       <div className="mb-3">
@@ -61,7 +74,8 @@ function Login() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          onChange={resetErrorOnChange}
+          value={password}
+          onChange={handlePasswordChange}
         />
       </div>
       <button type="submit" className="btn btn-primary">

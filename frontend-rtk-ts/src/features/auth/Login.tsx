@@ -1,40 +1,49 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { login, resetLoginFormError } from './authSlice';
+import { selectLoginFormError } from './selectors';
 import { useAppDispatch } from '../../store';
-import { login, selectLoginFormError, resetLoginFormError } from './authSlice';
 
-function Login() {
+function Login(): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const error = useSelector(selectLoginFormError);
+  const [name, setName] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
-      const form = event.target;
       const dispatchResult = await dispatch(
         login({
-          // ts
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          name: (form as any).name.value,
-          // ts
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          password: (form as any).password.value,
+          name,
+          password,
         })
       );
 
-      if (!dispatchResult.error) {
-        form.reset();
+      if (login.fulfilled.match(dispatchResult)) {
         navigate('/');
       }
     },
-    [dispatch, navigate]
+    [dispatch, name, navigate, password]
   );
 
-  const resetErrorOnChange = React.useCallback(() => {
-    dispatch(resetLoginFormError());
-  }, [dispatch]);
+  const handleNameChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setName(event.target.value);
+      dispatch(resetLoginFormError());
+    },
+    [dispatch]
+  );
+
+  const handlePasswordChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(event.target.value);
+      dispatch(resetLoginFormError());
+    },
+    [dispatch]
+  );
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
@@ -52,8 +61,9 @@ function Login() {
           type="text"
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
-          name="name"
-          onChange={resetErrorOnChange}
+          name="username"
+          value={name}
+          onChange={handleNameChange}
         />
       </div>
       <div className="mb-3">
@@ -65,7 +75,8 @@ function Login() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          onChange={resetErrorOnChange}
+          value={password}
+          onChange={handlePasswordChange}
         />
       </div>
       <button type="submit" className="btn btn-primary">

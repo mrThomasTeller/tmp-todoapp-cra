@@ -1,0 +1,24 @@
+.masthead {
+  padding-top: 0;
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+}
+
+.task {
+  display: flex;
+}
+
+.removeTask {
+  color: white;
+  cursor: pointer;
+}
+
+.doneCheckbox {}
+
+.authForm {
+  width: 200px;
+  margin: 0 auto;
+}

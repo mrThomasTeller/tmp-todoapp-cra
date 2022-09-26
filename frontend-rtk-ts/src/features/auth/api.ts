@@ -2,7 +2,6 @@ import Credentials from './types/Credentials';
 import RegisterData from './types/RegisterData';
 import User from './types/User';
 
-// ts
 export async function user(): Promise<
   | {
       isLoggedIn: true;
@@ -24,6 +23,11 @@ export async function login(credentials: Credentials): Promise<User> {
     },
   });
 
+  if (res.status >= 400) {
+    const { error } = await res.json();
+    throw error;
+  }
+
   return res.json();
 }
 
@@ -36,9 +40,16 @@ export async function register(data: RegisterData): Promise<User> {
     },
   });
 
+  if (res.status >= 400) {
+    const { error } = await res.json();
+    throw error;
+  }
+
   return res.json();
 }
 
-export async function logout(data: RegisterData): Promise<void> {
-  await fetch('/api/auth/logout', { method: 'POST' });
+export async function logout(): Promise<void> {
+  await fetch('/api/auth/logout', {
+    method: 'POST',
+  });
 }

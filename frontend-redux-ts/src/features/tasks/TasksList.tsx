@@ -12,33 +12,34 @@ import {
   resetTaskValidation,
 } from './actionsCreators';
 import Task, { TaskId } from './types/Task';
+import styles from './styles.module.css';
 
-function TasksList() {
+function TasksList(): JSX.Element {
   const tasks = useSelector(selectTasks);
   const error = useSelector(selectTasksError);
   const dispatch = useDispatch();
+  const [newTaskText, setNewTaskText] = React.useState('');
 
   useEffect(() => {
-    api.getTasks().then((tasks) => {
-      dispatch(tasksLoaded(tasks));
+    api.getTasks().then((loadedTasks) => {
+      dispatch(tasksLoaded(loadedTasks));
     });
   }, [dispatch]);
 
   const handleSubmit = React.useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
-      const form = event.target as HTMLFormElement;
       api
-        .createTask(form.taskTitle.value)
+        .createTask(newTaskText)
         .then((task) => {
           dispatch(addTaskSuccess(task));
-          form.reset();
+          setNewTaskText('');
         })
-        .catch((error) => {
-          dispatch(addTaskFailure(error));
+        .catch((createTaskError) => {
+          dispatch(addTaskFailure(createTaskError));
         });
     },
-    [dispatch]
+    [dispatch, newTaskText]
   );
 
   const handleTaskChange = React.useCallback(
@@ -59,9 +60,13 @@ function TasksList() {
     [dispatch]
   );
 
-  const resetErrorOnChange = React.useCallback(() => {
-    dispatch(resetTaskValidation());
-  }, [dispatch]);
+  const handleNewTaskTextChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewTaskText(event.target.value);
+      dispatch(resetTaskValidation());
+    },
+    [dispatch]
+  );
 
   return (
     <>
@@ -73,20 +78,24 @@ function TasksList() {
             placeholder="Добавьте задачу..."
             aria-label="Добавьте задачу..."
             name="taskTitle"
-            onChange={resetErrorOnChange}
+            value={newTaskText}
+            onChange={handleNewTaskTextChange}
           />
           <button type="submit" className="btn btn-primary">
             добавить
           </button>
         </div>
         {error && (
-          <div className="invalid-feedback text-end" style={{ display: 'block' }}>
+          <div
+            className="invalid-feedback text-end"
+            style={{ display: 'block' }}
+          >
             {error}
           </div>
         )}
       </form>
 
-      <div className="tasks list-group">
+      <div className={`${styles.tasks} list-group`}>
         {tasks.map((task) => (
           <TaskView
             key={task.id}

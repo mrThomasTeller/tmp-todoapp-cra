@@ -5,34 +5,55 @@ import { selectRegisterFormError } from './selectors';
 import * as api from './api';
 import { registerSuccess, resetRegisterFormError } from './actionsCreators';
 
-function Register() {
+function Register(): JSX.Element {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector(selectRegisterFormError);
+  const [name, setName] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [passwordRepeat, setPasswordRepeat] = React.useState('');
 
   const handleSubmit = React.useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
 
-      const form = event.target as HTMLFormElement;
       api
         .register({
-          name: form.username.value,
-          password: form.password.value,
-          passwordRepeat: form.passwordRepeat.value,
+          name,
+          password,
+          passwordRepeat,
         })
         .then((user) => {
           dispatch(registerSuccess(user));
-          form.reset();
           navigate('/');
         });
     },
-    [dispatch, navigate]
+    [dispatch, name, navigate, password, passwordRepeat]
   );
 
-  const resetErrorOnChange = React.useCallback(() => {
-    dispatch(resetRegisterFormError());
-  }, [dispatch]);
+  const handleNameChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setName(event.target.value);
+      dispatch(resetRegisterFormError());
+    },
+    [dispatch]
+  );
+
+  const handlePasswordChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(event.target.value);
+      dispatch(resetRegisterFormError());
+    },
+    [dispatch]
+  );
+
+  const handlePasswordRepeatChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setPasswordRepeat(event.target.value);
+      dispatch(resetRegisterFormError());
+    },
+    [dispatch]
+  );
 
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
@@ -51,7 +72,8 @@ function Register() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="name-input"
           name="username"
-          onChange={resetErrorOnChange}
+          value={name}
+          onChange={handleNameChange}
         />
       </div>
       <div className="mb-3">
@@ -63,7 +85,8 @@ function Register() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-input"
           name="password"
-          onChange={resetErrorOnChange}
+          value={password}
+          onChange={handlePasswordChange}
         />
       </div>
       <div className="mb-3">
@@ -75,7 +98,8 @@ function Register() {
           className={`form-control ${error ? 'is-invalid' : ''}`}
           id="password-repeat-input"
           name="passwordRepeat"
-          onChange={resetErrorOnChange}
+          value={passwordRepeat}
+          onChange={handlePasswordRepeatChange}
         />
       </div>
       <button type="submit" className="btn btn-primary">

@@ -1,5 +1,5 @@
-import TasksState from './types/TasksState';
 import { Reducer } from 'redux';
+import TasksState from './types/TasksState';
 import TasksAction from './types/TasksAction';
 
 const initialState: TasksState = {

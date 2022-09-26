@@ -1,6 +1,5 @@
-import Task from './types/Task';
+import Task, { TaskId } from './types/Task';
 import TasksAction from './types/TasksAction';
-import { TaskId } from './types/Task';
 
 export const addTaskSuccess = (task: Task): TasksAction => ({
   type: 'TASKS_ADD_SUCCESS',

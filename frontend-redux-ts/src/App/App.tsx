@@ -10,7 +10,7 @@ import * as api from '../features/auth/api';
 import { userChecked } from '../features/auth/actionsCreators';
 import Register from '../features/auth/Register';
 
-function App() {
+function App(): JSX.Element {
   const dispatch = useDispatch();
   const authChecked = useSelector(selectAuthChecked);
 

@@ -6,7 +6,6 @@ import App from './App/App';
 import './index.css';
 
 const container = document.getElementById('root');
-// ts
 const root = container && createRoot(container);
 
 root!.render(
