@@ -1,4 +1,4 @@
-import Task from './types/Task';
+import Task, { TaskId } from './types/Task';
 
 export async function createTask(title: string): Promise<Task> {
   const res = await fetch('/api/tasks', {
@@ -27,12 +27,13 @@ export async function updateTask(task: Task): Promise<void> {
   });
 }
 
-export async function deleteTask(task: Task): Promise<void> {
-  await fetch(`/api/tasks/${task.id}`, {
+export async function deleteTask(id: TaskId): Promise<void> {
+  await fetch(`/api/tasks/${id}`, {
     method: 'DELETE',
   });
 }
 
 export async function getTasks(): Promise<Task[]> {
-  return (await fetch('/api/tasks')).json();
+  const result = await fetch('/api/tasks');
+  return result.json();
 }

@@ -1,7 +1,9 @@
+// tasks/tasksSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { logout } from '../auth/authSlice';
 import Task, { TaskId } from './types/Task';
 import TasksState from './types/TasksState';
+import * as api from './api';
 
 const initialState: TasksState = {
   tasks: [],
@@ -15,37 +17,18 @@ export const createTask = createAsyncThunk(
       throw new Error('Заголовок задачи не должен быть пустым');
     }
 
-    const data = await fetch('/api/tasks', {
-      method: 'POST',
-      body: JSON.stringify({ title }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (data.status >= 400) {
-      const { error } = await data.json();
-      throw error;
-    } else {
-      return data.json();
-    }
+    return api.createTask(title);
   }
 );
 
 export const loadTasks = createAsyncThunk('tasks/loadTasks', () =>
-  fetch('/api/tasks').then((result) => result.json())
+  api.getTasks()
 );
 
 export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async (newTask: Task) => {
-    await fetch(`/api/tasks/${newTask.id}`, {
-      method: 'PUT',
-      body: JSON.stringify(newTask),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    await api.updateTask(newTask);
     return newTask;
   }
 );
@@ -53,9 +36,7 @@ export const updateTask = createAsyncThunk(
 export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
   async (id: TaskId) => {
-    await fetch(`/api/tasks/${id}`, {
-      method: 'DELETE',
-    });
+    await api.deleteTask(id);
     return id;
   }
 );
