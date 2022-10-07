@@ -1,0 +1,10 @@
+{
+  "eslint.workingDirectories": [
+    "backend",
+    "frontend-redux",
+    "frontend-redux-ts",
+    "frontend-rtk",
+    "frontend-rtk-query",
+    "frontend-rtk-ts"
+  ]
+}
