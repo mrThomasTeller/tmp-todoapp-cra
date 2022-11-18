@@ -6,7 +6,10 @@ const initialState: TasksState = {
   tasks: [],
 };
 
-const tasksReducer: Reducer<TasksState, TasksAction> = (state = initialState, action) => {
+const tasksReducer: Reducer<TasksState, TasksAction> = (
+  state = initialState,
+  action
+) => {
   switch (action.type) {
     case 'TASKS_ADD_SUCCESS': {
       const task = action.payload;
@@ -30,7 +33,9 @@ const tasksReducer: Reducer<TasksState, TasksAction> = (state = initialState, ac
       const newTask = action.payload;
       return {
         ...state,
-        tasks: state.tasks.map((task) => (task.id === newTask.id ? newTask : task)),
+        tasks: state.tasks.map((task) =>
+          task.id === newTask.id ? newTask : task
+        ),
       };
     }
 

@@ -5,6 +5,7 @@
     "frontend-redux-ts",
     "frontend-rtk",
     "frontend-rtk-query",
-    "frontend-rtk-ts"
+    "frontend-rtk-ts",
+    "frontend-adv-ts"
   ]
 }
